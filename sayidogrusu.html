@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kesirler - Sayı Doğrusu Etkinliği</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #2980b9, #2c3e50);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+
+        .mode-selection {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .mode-btn {
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .mode-btn.active {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        #mode1 {
+            background: #3498db;
+            color: white;
+        }
+
+        #mode2 {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .question-box {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .question-title {
+            font-size: 1.3em;
+            color: #34495e;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .kesir-kutusu {
+            width: 70px;
+            height: 70px;
+            border: 2px solid #333;
+            border-radius: 5px;
+            background: white;
+            display: inline-flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 0 5px;
+            vertical-align: middle;
+        }
+        
+        .kesir-pay {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+            line-height: 1.2;
+        }
+        
+        .kesir-cizgi {
+            width: 40px;
+            height: 2px;
+            background: #e74c3c;
+            margin: 2px 0;
+        }
+        
+        .kesir-payda {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+            line-height: 1.2;
+        }
+
+        .number-line-container {
+            background: white;
+            padding: 40px 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            cursor: pointer;
+        }
+
+        svg {
+            width: 100%;
+            height: 120px;
+            overflow: visible;
+        }
+
+        .click-instruction {
+            text-align: center;
+            color: #7f8c8d;
+            font-style: italic;
+            margin: 10px 0;
+        }
+
+        .input-area {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .input-area label {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        input {
+            padding: 12px 20px;
+            font-size: 1.1em;
+            border: 2px solid #bdc3c7;
+            border-radius: 8px;
+            width: 150px;
+        }
+
+        .check-btn {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+
+        .random-btn {
+            background: #f39c12;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .pdf-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+
+        .result {
+            margin-left: 15px;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .correct {
+            color: #27ae60;
+        }
+
+        .incorrect {
+            color: #c0392b;
+        }
+
+        .marker {
+            fill: #e74c3c;
+            stroke: white;
+            stroke-width: 2;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .denominator-input {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            background: #ecf0f1;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        #denominator {
+            width: 80px;
+        }
+
+        .mode2-info {
+            background: #e74c3c;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.3em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .kesir-ornek {
+            width: 60px;
+            height: 60px;
+            border: 2px solid white;
+            background: white;
+        }
+        
+        .kesir-ornek .kesir-pay,
+        .kesir-ornek .kesir-payda {
+            color: black;
+            font-size: 22px;
+        }
+        
+        .kesir-ornek .kesir-cizgi {
+            background: #e74c3c;
+            width: 35px;
+            height: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📐 Sayı Doğrusunda Kesirler</h1>
+
+        <div class="mode-selection">
+            <button id="mode1" class="mode-btn active" onclick="setMode(1)">1️⃣ Sayı Doğrusundan Kesir Bul</button>
+            <button id="mode2" class="mode-btn" onclick="setMode(2)">2️⃣ Kesirden Sayı Doğrusu Çiz</button>
+        </div>
+
+        <div class="question-box">
+            <div id="mode1-content">
+                <div class="question-title">🔍 Sayı doğrusunda ● ile gösterilen nokta hangi kesirdir?</div>
+                <div class="denominator-input">
+                    <label>Paydayı gir (Kaç eş parça?):</label>
+                    <input type="number" id="denominator" min="2" max="12" value="6">
+                    <button class="check-btn" onclick="updateNumberLine()">Sayı Doğrusunu Çiz</button>
+                </div>
+            </div>
+
+            <div id="mode2-content">
+                <div class="question-title">✏️ Verilen kesri sayı doğrusunda göster</div>
+                <div class="mode2-info" id="targetFraction">
+                    <span>Hedef Kesir:</span>
+                    <div class="kesir-kutusu kesir-ornek" id="hedefKesirKutu">
+                        <div class="kesir-pay">3</div>
+                        <div class="kesir-cizgi"></div>
+                        <div class="kesir-payda">4</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="number-line-container" id="numberLine" onclick="handleLineClick(event)">
+                <svg viewBox="0 0 700 120" preserveAspectRatio="xMidYMid meet">
+                    <polygon points="30,55 20,60 30,65" fill="#34495e"/>
+                    <text x="40" y="45" font-size="16" fill="#34495e">0</text>
+                    
+                    <polygon points="670,55 680,60 670,65" fill="#34495e"/>
+                    <text x="645" y="45" font-size="16" fill="#34495e">1</text>
+                    
+                    <line x1="50" y1="60" x2="640" y2="60" stroke="#34495e" stroke-width="4"/>
+                    
+                    <g id="tickMarks"></g>
+                    
+                    <circle id="marker" cx="50" cy="55" r="8" class="marker" visibility="hidden"/>
+                </svg>
+            </div>
+            <div class="click-instruction" id="clickInstruction">👆 Sayı doğrusuna tıklayarak kırmızı nokta yerleştir</div>
+
+            <div class="input-area">
+                <label id="answerLabel">Kesir:</label>
+                <input type="text" id="answer" placeholder="örn: 3/4">
+                <button class="check-btn" onclick="checkAnswer()">Kontrol Et</button>
+                <span class="result" id="result"></span>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="random-btn" onclick="randomQuestion()">🎲 Rastgele Soru</button>
+            <button class="pdf-btn" onclick="generatePDF()">📥 PDF Oluştur (10 Soru)</button>
+        </div>
+    </div>
+
+    <script>
+        let currentMode = 1;
+        let currentDenominator = 6;
+        let currentPosition = 50;
+        let targetFraction = { numerator: 3, denominator: 4 };
+
+        window.onload = function() {
+            drawNumberLine(6);
+            let hedefKutu = document.getElementById('hedefKesirKutu');
+            hedefKutu.innerHTML = `
+                <div class="kesir-pay">${targetFraction.numerator}</div>
+                <div class="kesir-cizgi"></div>
+                <div class="kesir-payda">${targetFraction.denominator}</div>
+            `;
+        };
+
+        function setMode(mode) {
+            currentMode = mode;
+            document.getElementById('mode1').classList.remove('active');
+            document.getElementById('mode2').classList.remove('active');
+            
+            if (mode === 1) {
+                document.getElementById('mode1').classList.add('active');
+                document.getElementById('mode1-content').style.display = 'block';
+                document.getElementById('mode2-content').style.display = 'none';
+                document.getElementById('answerLabel').innerText = 'Kesir (örn: 3/6):';
+                resetNumberLine();
+            } else {
+                document.getElementById('mode2').classList.add('active');
+                document.getElementById('mode1-content').style.display = 'none';
+                document.getElementById('mode2-content').style.display = 'block';
+                document.getElementById('answerLabel').innerText = 'Tıkladığın nokta doğru mu?';
+                
+                drawNumberLine(targetFraction.denominator);
+                hideMarker();
+            }
+        }
+
+        function updateNumberLine() {
+            currentDenominator = parseInt(document.getElementById('denominator').value) || 6;
+            if (currentDenominator < 2) currentDenominator = 2;
+            if (currentDenominator > 12) currentDenominator = 12;
+            
+            drawNumberLine(currentDenominator);
+            hideMarker();
+        }
+
+        function drawNumberLine(denominator) {
+            let tickMarks = '';
+            const startX = 50;
+            const endX = 640;
+            const step = (endX - startX) / denominator;
+            
+            for (let i = 0; i <= denominator; i++) {
+                const x = startX + (i * step);
+                tickMarks += `<line x1="${x}" y1="55" x2="${x}" y2="65" stroke="#34495e" stroke-width="2"/>`;
+            }
+            
+            document.getElementById('tickMarks').innerHTML = tickMarks;
+        }
+
+        function handleLineClick(event) {
+            const svg = document.querySelector('svg');
+            const pt = svg.createSVGPoint();
+            pt.x = event.clientX;
+            pt.y = event.clientY;
+            const svgPt = pt.matrixTransform(svg.getScreenCTM().inverse());
+            
+            if (svgPt.y > 40 && svgPt.y < 80) {
+                const startX = 50;
+                const endX = 640;
+                const step = (endX - startX) / currentDenominator;
+                
+                const relativeX = svgPt.x - startX;
+                const segment = Math.round(relativeX / step);
+                const newX = startX + (segment * step);
+                
+                if (newX >= startX && newX <= endX) {
+                    currentPosition = newX;
+                    showMarker(newX);
+                    
+                    if (currentMode === 2) {
+                        checkClickPosition(segment);
+                    }
+                }
+            }
+        }
+
+        function showMarker(x) {
+            const marker = document.getElementById('marker');
+            marker.setAttribute('cx', x);
+            marker.setAttribute('cy', '55');
+            marker.setAttribute('visibility', 'visible');
+        }
+
+        function hideMarker() {
+            document.getElementById('marker').setAttribute('visibility', 'hidden');
+        }
+
+        function checkAnswer() {
+            const answer = document.getElementById('answer').value.trim();
+            const resultSpan = document.getElementById('result');
+            
+            if (currentMode === 1) {
+                const segment = Math.round((currentPosition - 50) / ((640 - 50) / currentDenominator));
+                
+                if (answer === `${segment}/${currentDenominator}`) {
+                    resultSpan.innerHTML = '✓ Doğru!';
+                    resultSpan.className = 'result correct';
+                } else {
+                    resultSpan.innerHTML = `✗ Yanlış. Doğru cevap: ${segment}/${currentDenominator}`;
+                    resultSpan.className = 'result incorrect';
+                }
+            }
+        }
+
+        function checkClickPosition(segment) {
+            const resultSpan = document.getElementById('result');
+            if (segment === targetFraction.numerator) {
+                resultSpan.innerHTML = '✅ Doğru nokta!';
+                resultSpan.className = 'result correct';
+            } else {
+                resultSpan.innerHTML = `❌ Yanlış. ${targetFraction.numerator}/${targetFraction.denominator} olmalı`;
+                resultSpan.className = 'result incorrect';
+            }
+        }
+
+        function generateRandomTarget() {
+            targetFraction.denominator = Math.floor(Math.random() * 7) + 3;
+            targetFraction.numerator = Math.floor(Math.random() * (targetFraction.denominator - 1)) + 1;
+            
+            currentDenominator = targetFraction.denominator;
+            
+            let hedefKutu = document.getElementById('hedefKesirKutu');
+            if (hedefKutu) {
+                hedefKutu.innerHTML = `
+                    <div class="kesir-pay">${targetFraction.numerator}</div>
+                    <div class="kesir-cizgi"></div>
+                    <div class="kesir-payda">${targetFraction.denominator}</div>
+                `;
+            }
+            
+            drawNumberLine(targetFraction.denominator);
+            hideMarker();
+        }
+
+        function randomQuestion() {
+            if (currentMode === 1) {
+                currentDenominator = Math.floor(Math.random() * 7) + 3;
+                document.getElementById('denominator').value = currentDenominator;
+                drawNumberLine(currentDenominator);
+                
+                const randomSegment = Math.floor(Math.random() * (currentDenominator - 1)) + 1;
+                const startX = 50;
+                const step = (640 - 50) / currentDenominator;
+                const markerX = startX + (randomSegment * step);
+                showMarker(markerX);
+            } else {
+                generateRandomTarget();
+            }
+            
+            document.getElementById('result').innerHTML = '';
+            document.getElementById('answer').value = '';
+        }
+
+        function resetNumberLine() {
+            drawNumberLine(currentDenominator);
+            hideMarker();
+            document.getElementById('result').innerHTML = '';
+            document.getElementById('answer').value = '';
+        }
+
+        function generatePDF() {
+            const win = window.open('', '_blank');
+            
+            let pdfHTML = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Kesirler Test</title>
+                <style>
+                    body { font-family: Arial; padding: 15px; max-width: 1100px; margin: 0 auto; }
+                    h1 { text-align: center; color: #2c3e50; font-size: 22px; margin: 5px 0; border-bottom: 2px solid #3498db; }
+                    .soru-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+                    .soru { border: 1px solid #ccc; border-radius: 5px; padding: 8px; }
+                    .soru-numara { font-size: 14px; font-weight: bold; color: #2980b9; }
+                    .kesir-kutusu { width: 45px; height: 45px; border: 1.5px solid #333; border-radius: 3px; background: white; display: inline-flex; flex-direction: column; justify-content: center; align-items: center; }
+                    .kesir-pay { font-size: 16px; font-weight: bold; }
+                    .kesir-cizgi { width: 25px; height: 1.5px; background: #e74c3c; margin: 1px 0; }
+                    .kesir-payda { font-size: 16px; font-weight: bold; }
+                    .sayi-dogrusu-svg { width: 100%; height: 60px; }
+                </style>
+            </head>
+            <body>
+                <h1>KESİRLER TESTİ</h1>
+                <div class="soru-grid">
+            `;
+
+            for (let i = 1; i <= 10; i++) {
+                const denominator = Math.floor(Math.random() * 7) + 3;
+                const numerator = Math.floor(Math.random() * (denominator - 1)) + 1;
+                const questionType = i % 2 === 0 ? 'kesir' : 'sayiDogrusu';
+                
+                pdfHTML += `<div class="soru"><div class="soru-numara">${i}</div>`;
+                
+                if (questionType === 'kesir') {
+                    const pointPosition = Math.floor(Math.random() * (denominator - 1)) + 1;
+                    pdfHTML += `<svg class="sayi-dogrusu-svg" viewBox="0 0 360 60">`;
+                    pdfHTML += `<polygon points="20,29 15,30 20,31" fill="black"/><text x="25" y="25" font-size="9">0</text>`;
+                    pdfHTML += `<polygon points="340,29 345,30 340,31" fill="black"/><text x="330" y="25" font-size="9">1</text>`;
+                    pdfHTML += `<line x1="35" y1="30" x2="325" y2="30" stroke="black" stroke-width="1.5"/>`;
+                    const step = 290 / denominator;
+                    for (let j = 0; j <= denominator; j++) {
+                        const x = 35 + (j * step);
+                        pdfHTML += `<line x1="${x}" y1="27" x2="${x}" y2="33" stroke="black" stroke-width="1"/>`;
+                    }
+                    const dotX = 35 + (pointPosition * step);
+                    pdfHTML += `<circle cx="${dotX}" cy="30" r="4" fill="red" stroke="white" stroke-width="1"/>`;
+                    pdfHTML += `</svg><div>Cevap: <div class="kesir-kutusu"><div class="kesir-pay"></div><div class="kesir-cizgi"></div><div class="kesir-payda"></div></div></div>`;
+                } else {
+                    pdfHTML += `<div style="text-align: center;"><div class="kesir-kutusu"><div class="kesir-pay">${numerator}</div><div class="kesir-cizgi"></div><div class="kesir-payda">${denominator}</div></div></div>`;
+                    pdfHTML += `<svg class="sayi-dogrusu-svg" viewBox="0 0 360 60">`;
+                    pdfHTML += `<polygon points="20,29 15,30 20,31" fill="black"/><text x="25" y="25" font-size="9">0</text>`;
+                    pdfHTML += `<polygon points="340,29 345,30 340,31" fill="black"/><text x="330" y="25" font-size="9">1</text>`;
+                    pdfHTML += `<line x1="35" y1="30" x2="325" y2="30" stroke="black" stroke-width="1.5"/>`;
+                    const step = 290 / denominator;
+                    for (let j = 0; j <= denominator; j++) {
+                        const x = 35 + (j * step);
+                        pdfHTML += `<line x1="${x}" y1="27" x2="${x}" y2="33" stroke="black" stroke-width="1"/>`;
+                    }
+                    pdfHTML += `</svg><div>● koy</div>`;
+                }
+                pdfHTML += `</div>`;
+            }
+
+            pdfHTML += `</div></body></html>`;
+
+            win.document.write(pdfHTML);
+            win.document.close();
+            setTimeout(() => { win.print(); }, 500);
+        }
+    </script>
+</body>
+</html>
